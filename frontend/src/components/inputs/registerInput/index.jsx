@@ -20,11 +20,26 @@ export default function RegisterInput({ placeholder, bottom, ...props }) {
         className={meta.touched && meta.error ? "input_error_border" : ""}
         style={{
           width: `${
-            view1 && (field.name === "first_name" || field.name === "last_name")
-              ? "100%"
-              : view1 && (field.name === "email" || field.name === "password")
-              ? "370px"
-              : "300px"
+            // view1 && (field.name === "first_name" || field.name === "last_name")
+            //   ? "100%"
+            //   : view1 && (field.name === "email" || field.name === "password")
+            //   ? "370px"
+            //   : "300px"
+            (() => {
+              if (
+                view1 &&
+                (field.name === "first_name" || field.name === "last_name")
+              ) {
+                return "100%";
+              } else if (
+                view1 &&
+                (field.name === "email" || field.name === "password")
+              ) {
+                return "370px";
+              } else {
+                return "300px";
+              }
+            })()
           }`,
         }}
         type={field.type}
@@ -50,16 +65,15 @@ export default function RegisterInput({ placeholder, bottom, ...props }) {
                 //   : view3 && field.name === "last_name"
                 //   ? "error_arrow_right"
                 //   : !view3 && "error_arrow_bottom"
-                () => {
+                (() => {
                   if (view3 && field.name !== "last_name") {
-                    if (view3 && field.name === "last_name") {
-                      if (!view3) {
-                        return "error_arrow_bottom";
-                      }
-                    }
                     return "error_arrow_left";
+                  } else if (view3 && field.name === "last_name") {
+                    return "error_arrow_right";
+                  } else {
+                    return "error_arrow_right";
                   }
-                }
+                })()
               }
             ></div>
           )}
