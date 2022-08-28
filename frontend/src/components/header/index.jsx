@@ -27,6 +27,8 @@ export default function Header() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const allmenu = useRef(null);
   const usermenu = useRef(null);
+
+  // onblur allmenu
   useClickOutside(allmenu, () => {
     setShowAllMenu(false);
   });
