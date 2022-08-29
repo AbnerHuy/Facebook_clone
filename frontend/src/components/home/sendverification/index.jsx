@@ -5,6 +5,8 @@ import axios from "axios";
 export default function SendVerification({ user }) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  // em bị lỗi ở đây
   const sendVerificationLink = async () => {
     try {
       const { data } = await axios.post(
