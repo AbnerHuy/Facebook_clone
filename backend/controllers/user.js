@@ -7,7 +7,9 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../helpers/tokens");
-const { sendVerificationEmail } = require("../helpers/mailer");
+const { generateCode } = require("../helpers/generateCode");
+const { sendVerificationEmail, sendResetCode } = require("../helpers/mailer");
+const Code = require("../models/Code");
 exports.register = async (req, res) => {
   try {
     const {
@@ -47,7 +49,7 @@ exports.register = async (req, res) => {
     }
     if (!validateLength(password, 6, 40)) {
       return res.status(400).json({
-        message: "password must be atleast 6 characters.",
+        message: "password must be at least 6 characters.",
       });
     }
 
@@ -107,7 +109,7 @@ exports.activateAccount = async (req, res) => {
       await User.findByIdAndUpdate(user.id, { verified: true });
       return res
         .status(200)
-        .json({ message: "Account has beeen activated successfully." });
+        .json({ message: "Account has been activated successfully." });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -165,5 +167,44 @@ exports.sendVerification = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+exports.findUser = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email }).select("-password");
+    if (!user) {
+      return res.status(400).json({
+        message: "Account does not exists.",
+      });
+    }
+    return res.status(200).json({
+      email: user.email,
+      picture: user.picture,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.sendResetPasswordCode = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email }).select("-password");
+
+    await Code.findOneAndRemove({ user: user._id });
+    const code = generateCode(5);
+    const saveCode = await new Code({
+      code,
+      user: user._id,
+    }).save();
+    sendResetCode(user.email, user.first_name, code);
+    return res.status(200).json({
+      message: "Email reset code has been sent to your email",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+    d;
   }
 };
