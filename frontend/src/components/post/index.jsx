@@ -19,7 +19,7 @@ export default function Post({ post }) {
                   `updated ${
                     post.user.gender === "male" ? "his" : "her"
                   } profile picture`}
-                {post.type == "cover" &&
+                {post.type === "cover" &&
                   `updated ${
                     post.user.gender === "male" ? "his" : "her"
                   } cover picture`}
