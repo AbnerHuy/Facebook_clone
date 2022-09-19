@@ -11,9 +11,13 @@ import { useDispatch } from "react-redux";
 import PostError from "./PostError";
 import dataURItoBlob from "../../helpers/dataURItoBlob";
 import { uploadImages } from "../../function/uploadImages";
-
-export default function CreatePostPopup({ user, setVisible }) {
-  const dispatch = useDispatch();
+export default function CreatePostPopup({
+  user,
+  setVisible,
+  posts,
+  dispatch,
+  profile,
+}) {
   const popup = useRef(null);
   const [text, setText] = useState("");
   const [showPrev, setShowPrev] = useState(false);
@@ -36,7 +40,11 @@ export default function CreatePostPopup({ user, setVisible }) {
         user.token
       );
       setLoading(false);
-      if (response === "ok") {
+      if (response.status === "ok") {
+        dispatch({
+          type: profile ? "PROFILE_POSTS" : "POSTS_SUCCESS",
+          payload: [response.data, ...posts],
+        });
         setBackground("");
         setText("");
         setVisible(false);
@@ -48,13 +56,14 @@ export default function CreatePostPopup({ user, setVisible }) {
       const postImages = images.map((img) => {
         return dataURItoBlob(img);
       });
-      const path = `${user.username}/post Images`;
+      const path = `${user.username}/post_images`;
       let formData = new FormData();
       formData.append("path", path);
       postImages.forEach((image) => {
         formData.append("file", image);
       });
       const response = await uploadImages(formData, path, user.token);
+
       const res = await createPost(
         null,
         null,
@@ -63,10 +72,12 @@ export default function CreatePostPopup({ user, setVisible }) {
         user.id,
         user.token
       );
-
       setLoading(false);
-
-      if (res === "ok") {
+      if (res.status === "ok") {
+        dispatch({
+          type: profile ? "PROFILE_POSTS" : "POSTS_SUCCESS",
+          payload: [res.data, ...posts],
+        });
         setText("");
         setImages("");
         setVisible(false);
@@ -84,7 +95,11 @@ export default function CreatePostPopup({ user, setVisible }) {
         user.token
       );
       setLoading(false);
-      if (response === "ok") {
+      if (response.status === "ok") {
+        dispatch({
+          type: profile ? "PROFILE_POSTS" : "POSTS_SUCCESS",
+          payload: [response.data, ...posts],
+        });
         setBackground("");
         setText("");
         setVisible(false);

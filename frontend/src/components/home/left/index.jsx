@@ -1,19 +1,18 @@
-import "./style.css";
-import { Link } from "react-router-dom";
-import { left } from "../../../data/home";
 import LeftLink from "./LeftLink";
+import "./style.css";
+import { left } from "../../../data/home";
+import { Link } from "react-router-dom";
 import { ArrowDown1 } from "../../../svg";
-import Shortcut from "./Shortcut";
 import { useState } from "react";
-
+import Shortcut from "./Shortcut";
 export default function LeftHome({ user }) {
   const [visible, setVisible] = useState(false);
   return (
     <div className="left_home scrollbar">
-      <Link to="/profile" className="left_link hover1">
+      <Link to="/profile" className="left_link hover2">
         <img src={user?.picture} alt="" />
         <span>
-          {user?.first_name} {user?.last_name}
+          {user?.first_name} {user.last_name}
         </span>
       </Link>
       {left.slice(0, 8).map((link, i) => (
@@ -25,7 +24,12 @@ export default function LeftHome({ user }) {
         />
       ))}
       {!visible && (
-        <div className="left_link hover1" onClick={() => setVisible(true)}>
+        <div
+          className="left_link hover2"
+          onClick={() => {
+            setVisible(true);
+          }}
+        >
           <div className="small_circle">
             <ArrowDown1 />
           </div>
@@ -34,7 +38,7 @@ export default function LeftHome({ user }) {
       )}
       {visible && (
         <div className="more_left">
-          {left.slice(0, left.length).map((link, i) => (
+          {left.slice(8, left.length).map((link, i) => (
             <LeftLink
               key={i}
               img={link.img}
@@ -42,7 +46,12 @@ export default function LeftHome({ user }) {
               notification={link.notification}
             />
           ))}
-          <div className="left_link hover1" onClick={() => setVisible(false)}>
+          <div
+            className="left_link hover2 "
+            onClick={() => {
+              setVisible(false);
+            }}
+          >
             <div className="small_circle rotate360">
               <ArrowDown1 />
             </div>
@@ -50,7 +59,6 @@ export default function LeftHome({ user }) {
           </div>
         </div>
       )}
-
       <div className="splitter"></div>
       <div className="shortcut">
         <div className="heading">Your Shortcuts</div>
@@ -58,12 +66,13 @@ export default function LeftHome({ user }) {
       </div>
       <div className="shortcut_list">
         <Shortcut
-          link="https://github1.com/AbnerHuy"
-          img="../../images/github.png"
-          name="My Github"
+          link="https://www.youtube.com/c/MohamedHaJJi1/featured"
+          img="../../images/ytb.png"
+          name="My Youtube channel"
         />
+
         <Shortcut
-          link="https://www.instagram.com/prettyboytran"
+          link="https://www.instagram.com/med_hajji7/"
           img="../../images/insta.png"
           name="My Instagram "
         />

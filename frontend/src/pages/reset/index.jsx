@@ -32,7 +32,6 @@ export default function Reset() {
     });
     navigate("/login");
   };
-  console.log("ok here", userInfos);
 
   return (
     <div className="reset  ">

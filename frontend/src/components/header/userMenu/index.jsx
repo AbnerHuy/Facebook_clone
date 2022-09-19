@@ -9,6 +9,7 @@ import Cookies from "js-cookie";
 export default function UserMenu({ user }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [visible, setVisible] = useState(0);
 
   const logout = () => {
     Cookies.set("user", "");
@@ -18,7 +19,6 @@ export default function UserMenu({ user }) {
     navigate("/");
   };
 
-  const [visible, setVisible] = useState(2);
   return (
     <div className="mmenu">
       {visible === 0 && (

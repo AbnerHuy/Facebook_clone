@@ -2,9 +2,80 @@ import { Link } from "react-router-dom";
 import "./style.css";
 import Moment from "react-moment";
 import { Dots, Public } from "../../svg";
-export default function Post({ post }) {
+import ReactsPopup from "./ReactsPopup";
+import { useEffect, useState, useRef } from "react";
+import CreateComment from "./CreateComment";
+import PostMenu from "./PostMenu";
+import { getReacts, reactPost } from "../../function/post";
+import Comment from "./Comment";
+
+export default function Post({ post, user, profile }) {
+  const [visible, setVisible] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [reacts, setReacts] = useState();
+  const [check, setCheck] = useState();
+  const [total, setTotal] = useState(0);
+  const [count, setCount] = useState(1);
+  const [comments, setComments] = useState([]);
+  const [checkSaved, setCheckSaved] = useState();
+  const postRef = useRef(null);
+
+  const getPostReacts = async () => {
+    const res = await getReacts(post._id, user.token);
+    setReacts(res.reacts);
+    setCheck(res.check);
+    setTotal(res.total);
+    setCheckSaved(res.checkSaved);
+  };
+
+  const reactHandler = async (type) => {
+    reactPost(post._id, type, user.token);
+    // nếu emoji  trùng với emoji trong db
+    if (check == type) {
+      setCheck();
+      // emoji
+      let index = reacts.findIndex((x) => x.react == check);
+
+      // TH emoji trong array có rùi thì xóa đi , trừ đi số emoji tồn tại -1
+      if (index !== -1) {
+        setReacts([...reacts, (reacts[index].count = --reacts[index].count)]);
+        setTotal((prev) => --prev);
+      }
+    } else {
+      setCheck(type);
+
+      let index = reacts.findIndex((x) => x.react == type);
+      let index1 = reacts.findIndex((x) => x.react == check);
+      //
+      if (index !== -1) {
+        setReacts([...reacts, (reacts[index].count = ++reacts[index].count)]);
+        setTotal((prev) => ++prev);
+      }
+      // nếu có emoji trong array trùng với emoji đã nhập trước đó thì xóa đi
+      if (index1 !== -1) {
+        setReacts([...reacts, (reacts[index1].count = --reacts[index1].count)]);
+        setTotal((prev) => --prev);
+      }
+    }
+  };
+  useEffect(() => {
+    getPostReacts();
+  }, [post]);
+
+  useEffect(() => {
+    setComments(post?.comments);
+  }, [post]);
+
+  const showMore = () => {
+    setCount((prev) => prev + 3);
+  };
+
   return (
-    <div className="post">
+    <div
+      className="post"
+      style={{ width: `${profile && "100%"}` }}
+      ref={postRef}
+    >
       <div className="post_header">
         <Link
           to={`/profile/${post.user.username}`}
@@ -19,7 +90,7 @@ export default function Post({ post }) {
                   `updated ${
                     post.user.gender === "male" ? "his" : "her"
                   } profile picture`}
-                {post.type === "cover" &&
+                {post.type == "coverPicture" &&
                   `updated ${
                     post.user.gender === "male" ? "his" : "her"
                   } cover picture`}
@@ -33,7 +104,10 @@ export default function Post({ post }) {
             </div>
           </div>
         </Link>
-        <div className="post_header_right hover1">
+        <div
+          className="post_header_right hover1"
+          onClick={() => setShowMenu((prev) => !prev)}
+        >
           <Dots color="#828387" />
         </div>
       </div>
@@ -44,7 +118,7 @@ export default function Post({ post }) {
         >
           <div className="post_bg_text">{post.text}</div>
         </div>
-      ) : (
+      ) : post.type === null ? (
         <>
           <div className="post_text">{post.text}</div>
           {post.images && post.images.length && (
@@ -72,6 +146,148 @@ export default function Post({ post }) {
             </div>
           )}
         </>
+      ) : post.type === "profilePicture" ? (
+        <div className="post_profile_wrap">
+          <div className="post_updated_bg">
+            <img src={post.user.cover} alt="" />
+          </div>
+          <img
+            src={post.images[0].url}
+            alt=""
+            className="post_updated_picture"
+          />
+        </div>
+      ) : (
+        <div className="post_cover_wrap">
+          <img src={post.images[0].url} alt="" />
+        </div>
+      )}
+
+      <div className="post_infos">
+        <div className="reacts_count">
+          <div className="reacts_count_imgs">
+            {reacts &&
+              reacts
+                .sort((a, b) => {
+                  return b.count - a.count;
+                })
+                .slice(0, 3)
+                .map(
+                  (react, i) =>
+                    react.count > 0 && (
+                      <img
+                        src={`../../../reacts/${react.react}.svg`}
+                        alt=""
+                        key={i}
+                      />
+                    )
+                )}
+          </div>
+          <div className="reacts_count_num">{total > 0 && total}</div>
+        </div>
+        <div className="to_right">
+          <div className="comments_count">{comments.length} comments</div>
+          <div className="share_count">0 share</div>
+        </div>
+      </div>
+      <div className="post_actions">
+        <ReactsPopup
+          visible={visible}
+          setVisible={setVisible}
+          reactHandler={reactHandler}
+        />
+        <div
+          className="post_action hover1"
+          onMouseOver={() => {
+            setTimeout(() => {
+              setVisible(true);
+            }, 500);
+          }}
+          onMouseLeave={() => {
+            setTimeout(() => {
+              setVisible(false);
+            }, 500);
+          }}
+          onClick={() => reactHandler(check ? check : "like")}
+        >
+          {check ? (
+            <img
+              src={`../../../reacts/${check}.svg`}
+              alt=""
+              className="small_react"
+              style={{ width: "18px" }}
+            />
+          ) : (
+            <i className="like_icon"></i>
+          )}
+          <span
+            style={{
+              color: `
+          
+          ${
+            check === "like"
+              ? "#4267b2"
+              : check === "love"
+              ? "#f63459"
+              : check === "haha"
+              ? "#f7b125"
+              : check === "sad"
+              ? "#f7b125"
+              : check === "wow"
+              ? "#f7b125"
+              : check === "angry"
+              ? "#e4605a"
+              : ""
+          }
+          `,
+            }}
+          >
+            {check ? check : "Like"}
+          </span>
+        </div>
+        <div className="post_action hover1">
+          <i className="comment_icon"></i>
+          <span>Comment</span>
+        </div>
+        <div className="post_action hover1">
+          <i className="share_icon"></i>
+          <span>Share</span>
+        </div>
+      </div>
+      <div className="comments_wrap">
+        <div className="comments_order"></div>
+        <CreateComment
+          user={user}
+          postId={post._id}
+          setComments={setComments}
+          setCount={setCount}
+        />
+        {comments &&
+          comments
+            .sort((a, b) => {
+              return new Date(b.commentAt) - new Date(a.commentAt);
+            })
+            .slice(0, count)
+            .map((comment, i) => <Comment comment={comment} key={i} />)}
+        {count < comments.length && (
+          <div className="view_comments" onClick={() => showMore()}>
+            View more comments
+          </div>
+        )}
+      </div>
+      {showMenu && (
+        <PostMenu
+          userId={user.id}
+          postUserId={post.user._id}
+          imagesLength={post?.images?.length}
+          setShowMenu={setShowMenu}
+          checkSaved={checkSaved}
+          setCheckSaved={setCheckSaved}
+          images={post.images}
+          postId={post._id}
+          token={user.token}
+          postRef={postRef}
+        />
       )}
     </div>
   );
