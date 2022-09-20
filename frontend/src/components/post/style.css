@@ -473,7 +473,8 @@
   object-fit: cover;
 }
 .post_updated_picture {
-  z-index: 1;
+  z-index: 0;
+  position: absolute;
   width: 420px;
   height: 420px;
   border-radius: 50%;

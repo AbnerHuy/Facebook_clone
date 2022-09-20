@@ -12,7 +12,6 @@ import { useEffect, useReducer, useState } from "react";
 import axios from "axios";
 import { postsReducer } from "./function/reducers";
 import Friends from "./pages/friends";
-
 function App() {
   const [visible, setVisible] = useState(false);
   const { user, darkTheme } = useSelector((state) => ({ ...state }));
@@ -23,14 +22,14 @@ function App() {
   });
   useEffect(() => {
     getAllPosts();
-  }, []);
+  }, [loading]);
   const getAllPosts = async () => {
     try {
       dispatch({
         type: "POSTS_REQUEST",
       });
       const { data } = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}/getAllposts`,
+        `${process.env.REACT_APP_BACKEND_URL}/getAllPosts`,
         {
           headers: {
             Authorization: `Bearer ${user.token}`,
