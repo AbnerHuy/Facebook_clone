@@ -22,7 +22,7 @@ function App() {
   });
   useEffect(() => {
     getAllPosts();
-  }, [loading]);
+  }, []);
   const getAllPosts = async () => {
     try {
       dispatch({

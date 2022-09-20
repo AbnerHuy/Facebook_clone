@@ -8,6 +8,7 @@ import { updateprofilePicture } from "../../function/user";
 import getCroppedImg from "../../helpers/getCroppedImg";
 import PulseLoader from "react-spinners/PulseLoader";
 import Cookies from "js-cookie";
+
 export default function UpdateProfilePicture({
   setImage,
   image,

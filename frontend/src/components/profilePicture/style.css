@@ -1,7 +1,8 @@
 .pictureBox {
   width: 700px !important;
 
-  height: 700px;
+  height: 560px;
+  overflow-y: hidden;
 }
 .update_picture_wrap {
   padding: 10px 15px;
@@ -18,10 +19,11 @@
 }
 .update_img {
   width: 700px !important;
-  height: 800px;
+  height: 700px;
+  margin: 40px 0px;
 }
 .update_image_desc {
-  padding: 15px;
+  padding: 3px;
 }
 .textarea_blue {
   width: 100%;
@@ -44,11 +46,12 @@
 }
 .update_center {
   position: relative;
-  height: 400px;
+  height: 370px;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  transform: translateY(-5px);
 }
 .crooper {
   position: relative;
@@ -68,7 +71,7 @@
 }
 .slider {
   position: absolute;
-  bottom: -20px;
+  bottom: -15px;
   width: 100%;
   display: flex;
   gap: 5px;
@@ -105,13 +108,13 @@
   align-items: center;
   justify-content: center;
   gap: 15px;
-  margin-top: 2rem;
+  margin-top: 1.5rem;
 }
 .flex_p_t {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 15px;
+  padding: 10px;
   color: var(--color-secondary);
   font-size: 17px;
   border-bottom: 1px solid var(--bg-third);
