@@ -1,4 +1,4 @@
-exports.generateCode = (length) => {
+function generateCode(length) {
   let code = "";
   let schema = "0123456789";
 
@@ -7,4 +7,6 @@ exports.generateCode = (length) => {
   }
 
   return code;
-};
+}
+
+module.exports = generateCode;
